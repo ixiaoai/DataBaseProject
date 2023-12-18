@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<h2>User Management</h2>
+
+<!-- Login Form -->
+<h3>Login</h3>
+<form id="login-form">
+    <label for="login-username">Username:</label>
+    <input type="text" id="login-username" required>
+
+    <label for="login-password">Password:</label>
+    <input type="password" id="login-password" required>
+
+    <button type="button" onclick="login()">Login</button>
+</form>
+
+<!-- CreateUser Form -->
+<h3>Create User</h3>
+<form id="create-user-form">
+    <label for="create-username">Username:</label>
+    <input type="text" id="create-username" required>
+
+    <label for="create-password">Password:</label>
+    <input type="password" id="create-password" required>
+
+    <label for="create-repassword">Confirm Password:</label>
+    <input type="password" id="create-repassword" required>
+
+    <button type="button" onclick="createUser()">Create User</button>
+</form>
+
+<script>
+    const apiUrl = "http://localhost:8080"; // Replace with your actual API URL
+
+    function login() {
+        const username = $("#login-username").val();
+        const password = $("#login-password").val();
+
+        $.ajax({
+            url: apiUrl + "/user/findUserByNameAndPwd",
+            method: "POST",
+            data: { name: username, password: password },
+            success: function(response) {
+                console.log(response);
+                if (response.code === 0) {
+                    // Login successful, redirect to another page
+                    window.location.href = "user_dashboard.html";
+                } else {
+                    alert("Login failed: " + response.message);
+                }
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+
+    function createUser() {
+        const username = $("#create-username").val();
+        const password = $("#create-password").val();
+        const repassword = $("#create-repassword").val();
+
+        $.ajax({
+            url: apiUrl + "/user/createUser",
+            method: "POST",
+            data: { name: username, password: password, repassword: repassword },
+            success: function(response) {
+                console.log(response);
+                if (response.code === 0) {
+                    alert("User created successfully!");
+                } else {
+                    alert("Failed to create user: " + response.message);
+                }
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

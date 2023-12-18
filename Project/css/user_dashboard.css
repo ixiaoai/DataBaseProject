@@ -1,0 +1,97 @@
+/* Reset some default styles for consistency */
+body, h2, p, form, button {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+h2 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+h3 {
+    color: #333;
+}
+
+p {
+    margin-bottom: 20px;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Container for displaying user list and search results */
+#resultContainer {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* Additional styling for specific containers */
+#userListContainer, #findUserByNameContainer, #findUserByPhoneContainer {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#userListContainer,#findUserByNameContainer, #findUserByPhoneContainer {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Logout button styling */
+#logoutButton {
+    display: block;
+    margin: 20px auto;
+    background-color: #f44336;
+}
+
+#logoutButton:hover {
+    background-color: #d32f2f;
+}

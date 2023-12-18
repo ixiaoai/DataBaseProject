@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="css/user_dashboard.css">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<h2>Welcome to the User Dashboard</h2>
+
+<p>This is the user dashboard page. You can customize this page based on your requirements.</p>
+
+<form id="getUserListForm" onsubmit="return getUserList()">
+  <button type="submit">Get User List</button>
+</form>
+
+<!-- Container for displaying user list -->
+<div id="userListContainer">查询结果</div>
+
+<h3>删除用户</h3>
+<form id="deleteUserForm" onsubmit="return deleteUser()">
+
+  <label for="delete-user-id">User ID:</label>
+  <input type="text" id="delete-user-id" required>
+  <button type="submit">Delete User</button>
+</form>
+
+<h3>修改信息</h3>
+<form id="updateUserForm" onsubmit="return updateUser()">
+
+  <label for="update-user-id">User ID:</label>
+  <input type="text" id="update-user-id" required>
+  <label for="update-username">New Username:</label>
+  <input type="text" id="update-username">
+  <label for="update-password">New Password:</label>
+  <input type="password" id="update-password">
+  <label for="update-phone">New Phone:</label>
+  <input type="text" id="update-phone">
+  <label for="update-email">New Email:</label>
+  <input type="text" id="update-email">
+  <button type="submit">Update User</button>
+</form>
+
+<h3>根据用户名查找</h3>
+<form id="getUserByNameForm" onsubmit="return getUserByName()">
+
+  <label for="find-by-name-username">Username:</label>
+  <input type="text" id="find-by-name-username" required>
+  <button type="submit">Find User by Name</button>
+</form>
+
+<!-- Container for displaying find user by name result -->
+<div id="findUserByNameContainer">查询结果</div>
+
+<h3>根据手机号查找</h3>
+<form id="getUserByPhoneForm" onsubmit="return getUserByPhone()">
+
+  <label for="find-by-phone-phone">Phone:</label>
+  <input type="text" id="find-by-phone-phone" required>
+  <button type="submit">Find User by Phone</button>
+</form>
+
+<!-- Container for displaying find user by phone result -->
+<div id="findUserByPhoneContainer">查询结果</div>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+  const apiUrl = "http://localhost:8080"; // Replace with your actual API URL
+
+  function getUserList() {
+    $.ajax({
+      url: apiUrl + "/user/getUserList",
+      method: "GET",
+      success: function(response) {
+        console.log(response);
+        // Handle the user list response as needed
+
+        // Display user list
+        displayUserList(response);
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+    return false; // Prevent form submission
+  }
+
+  function displayUserList(response) {
+    console.log("Response:", response);
+
+    // Clear previous results
+    $("#userListContainer").empty();
+
+    // Check if response has 'data' property and it's an array
+    if (response && response.data && Array.isArray(response.data)) {
+      // Display user list in a <ul> element
+      var userListElement = $("<ul>");
+      response.data.forEach(function (user) {
+        var listItem = $("<li>").text("User ID: " + user.ID + ", Username: " + user.Name +
+                ", Phone: " + user.Phone + ", Email: " + user.Email);
+        userListElement.append(listItem);
+      });
+
+      // Append the user list to the container
+      $("#userListContainer").append(userListElement);
+    } else {
+      console.error("Invalid response format. Expected 'data' to be an array.");
+    }
+  }
+
+  function deleteUser() {
+    const userId = $("#delete-user-id").val();
+    $.ajax({
+      url: apiUrl + "/user/deleteUser",
+      method: "GET",
+      data: { id: userId },
+      success: function(response) {
+        console.log(response);
+        alert("删除成功");
+        // Handle the delete user response as needed
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+    return false; // Prevent form submission
+  }
+
+  function updateUser() {
+    const userId = $("#update-user-id").val();
+    const newUsername = $("#update-username").val();
+    const newPassword = $("#update-password").val();
+    const newPhone = $("#update-phone").val();
+    const newEmail = $("#update-email").val();
+
+    $.ajax({
+      url: apiUrl + "/user/updateUser",
+      method: "POST",
+      data: { id: userId, name: newUsername, password: newPassword, phone: newPhone, email: newEmail },
+      success: function(response) {
+        console.log(response);
+        alert("修改成功");
+        // Handle the update user response as needed
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+    return false; // Prevent form submission
+  }
+
+  function getUserByName() {
+    const username = $("#find-by-name-username").val();
+    $.ajax({
+      url: apiUrl + "/user/getUserByName",
+      method: "GET",
+      data: { name: username },
+      success: function(response) {
+        // Display find user by name result
+        displayFindUserByNameResult(response);
+        console.log(response);
+        // Handle the find user by name response as needed
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+    return false; // Prevent form submission
+  }
+
+  function displayFindUserByNameResult(response) {
+    // Clear previous results
+    $("#findUserByNameContainer").empty();
+
+    // Log the entire response object
+    console.log("Full Response:", response);
+
+    // Check if response has 'data' property and it's not empty
+    if (response && response.data) {
+      // Display find user by name result
+      var user = response.data;
+      var resultElement = $("<p>").text("User ID: " + user.ID + ", Username: " + user.Name +
+              ", Phone: " + user.Phone + ", Email: " + user.Email);
+      $("#findUserByNameContainer").append(resultElement);
+    } else {
+      console.error("No user found by name. Invalid response format or empty result.");
+    }
+  }
+
+  function getUserByPhone() {
+    const phone = $("#find-by-phone-phone").val();
+    $.ajax({
+      url: apiUrl + "/user/getUserByPhone",
+      method: "GET",
+      data: { phone: phone },
+      success: function(response) {
+        console.log(response);
+        // Handle the find user by phone response as needed
+        // Display find user by phone result
+        displayFindUserByPhoneResult(response);
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+    return false; // Prevent form submission
+  }
+
+  function displayFindUserByPhoneResult(response) {
+    // Clear previous results
+    $("#findUserByPhoneContainer").empty();
+
+    // Log the entire response object
+    console.log("Full Response:", response);
+
+    // Check if response has 'data' property and it's not empty
+    if (response && response.data) {
+      // Display find user by phone result
+      var user = response.data;
+      var resultElement = $("<p>").text("User ID: " + user.ID + ", Username: " + user.Name +
+              ", Phone: " + user.Phone + ", Email: " + user.Email);
+      $("#findUserByPhoneContainer").append(resultElement);
+    } else {
+      console.error("No user found by phone. Invalid response format or empty result.");
+    }
+  }
+
+  function logout() {
+    // Implement logic to handle user logout, e.g., redirect to login page
+    window.location.href = "index.html";
+  }
+</script>
+</body>
+</html>
