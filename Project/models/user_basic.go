@@ -55,12 +55,6 @@ func FindUserByPhone(phone string) UserBasic {
 	return user
 }
 
-// FindUserByEmail 通过Email查找
-func FindUserByEmail(email string) *gorm.DB {
-	user := UserBasic{}
-	return utils.DB.Where("email=?", email).First(&user)
-}
-
 // FindUserByNameAndPwd 登陆通过Name和Pwd查找
 func FindUserByNameAndPwd(name string, password string) UserBasic {
 	user := UserBasic{}
@@ -76,8 +70,15 @@ func FindUserByNameAndPwd(name string, password string) UserBasic {
 func CreateUser(user UserBasic) *gorm.DB {
 	return utils.DB.Create(&user)
 }
+
+// DeleteUser 软删除
 func DeleteUser(user UserBasic) *gorm.DB {
 	return utils.DB.Delete(&user)
+}
+
+// HardDeleteUser 硬删除
+func HardDeleteUser(user UserBasic) *gorm.DB {
+	return utils.DB.Unscoped().Delete(&user)
 }
 
 func UpdateUser(user UserBasic) *gorm.DB {

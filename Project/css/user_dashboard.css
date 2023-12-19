@@ -24,7 +24,7 @@ p {
 }
 
 form {
-    max-width: 400px;
+    max-width: 480px;
     margin: 0 auto;
     background-color: #fff;
     padding: 20px;
@@ -45,6 +45,7 @@ input {
 }
 
 button {
+    margin-top: 20px;
     background-color: #4caf50;
     color: #fff;
     padding: 10px 15px;
@@ -81,7 +82,7 @@ li {
 }
 
 #userListContainer,#findUserByNameContainer, #findUserByPhoneContainer {
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
 }
 
@@ -95,3 +96,36 @@ li {
 #logoutButton:hover {
     background-color: #d32f2f;
 }
+
+/* Style for the user list table */
+.user-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+/* Style for table header */
+.user-list-table th {
+    background-color: #f2f2f2;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+/* Style for table rows */
+.user-list-table tr {
+    border: 1px solid #dddddd;
+}
+
+/* Style for alternating row background color */
+.user-list-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Style for table cells */
+.user-list-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+

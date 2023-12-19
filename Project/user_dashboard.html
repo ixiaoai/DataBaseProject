@@ -19,13 +19,7 @@
 <!-- Container for displaying user list -->
 <div id="userListContainer">查询结果</div>
 
-<h3>删除用户</h3>
-<form id="deleteUserForm" onsubmit="return deleteUser()">
 
-  <label for="delete-user-id">User ID:</label>
-  <input type="text" id="delete-user-id" required>
-  <button type="submit">Delete User</button>
-</form>
 
 <h3>修改信息</h3>
 <form id="updateUserForm" onsubmit="return updateUser()">
@@ -41,6 +35,22 @@
   <label for="update-email">New Email:</label>
   <input type="text" id="update-email">
   <button type="submit">Update User</button>
+</form>
+
+<h3>软删除用户</h3>
+<form id="deleteUserForm" onsubmit="return deleteUser()">
+
+  <label for="delete-user-id">User ID:</label>
+  <input type="text" id="delete-user-id" required>
+  <button type="submit">Delete User</button>
+</form>
+
+<h3>硬删除用户</h3>
+<form id="harddeleteUserForm" onsubmit="return hardDeleteUser()">
+
+  <label for="hard-delete-user-id">User ID:</label>
+  <input type="text" id="hard-delete-user-id" required>
+  <button type="submit">Delete User</button>
 </form>
 
 <h3>根据用户名查找</h3>
@@ -96,21 +106,37 @@
 
     // Check if response has 'data' property and it's an array
     if (response && response.data && Array.isArray(response.data)) {
-      // Display user list in a <ul> element
-      var userListElement = $("<ul>");
+      // Create a table element
+      var tableElement = $("<table>").addClass("user-list-table");
+
+      // Create table header
+      var tableHeader = $("<tr>").append(
+              $("<th>").text("User ID"),
+              $("<th>").text("Username"),
+              $("<th>").text("Phone"),
+              $("<th>").text("Email")
+      );
+      tableElement.append(tableHeader);
+
+      // Populate the table with user data
       response.data.forEach(function (user) {
-        var listItem = $("<li>").text("User ID: " + user.ID + ", Username: " + user.Name +
-                ", Phone: " + user.Phone + ", Email: " + user.Email);
-        userListElement.append(listItem);
+        var tableRow = $("<tr>").append(
+                $("<td>").text(user.ID),
+                $("<td>").text(user.Name),
+                $("<td>").text(user.Phone),
+                $("<td>").text(user.Email)
+        );
+        tableElement.append(tableRow);
       });
 
-      // Append the user list to the container
-      $("#userListContainer").append(userListElement);
+      // Append the table to the container
+      $("#userListContainer").append(tableElement);
     } else {
       console.error("Invalid response format. Expected 'data' to be an array.");
     }
   }
 
+  //软删除
   function deleteUser() {
     const userId = $("#delete-user-id").val();
     $.ajax({
@@ -129,12 +155,53 @@
     return false; // Prevent form submission
   }
 
+  //硬删除
+  function hardDeleteUser() {
+    const userId = $("#hard-delete-user-id").val();
+
+    // 发送 AJAX 请求到服务器端执行硬删除操作
+    $.ajax({
+      url: apiUrl + "/user/hardDeleteUser",
+      method: "GET",
+      data: { id: userId },
+      success: function(response) {
+        console.log(response);
+        if (response.code === 0) {
+          alert("硬删除成功");
+        } else {
+          alert("硬删除失败: " + response.message);
+        }
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+
+    return false; // 阻止表单提交
+  }
+
+
   function updateUser() {
     const userId = $("#update-user-id").val();
     const newUsername = $("#update-username").val();
     const newPassword = $("#update-password").val();
     const newPhone = $("#update-phone").val();
     const newEmail = $("#update-email").val();
+
+    // 验证电话号码格式
+    const phoneRegex = /^1[3-9]\d{9}$/;
+
+    if (!phoneRegex.test(newPhone)) {
+      alert("请输入有效的电话号码");
+      return false; // 阻止表单提交
+    }
+
+    // 验证电子邮件格式
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      alert("请输入有效的电子邮件地址");
+      return false; // 阻止表单提交
+    }
 
     $.ajax({
       url: apiUrl + "/user/updateUser",
@@ -143,14 +210,23 @@
       success: function(response) {
         console.log(response);
         alert("修改成功");
-        // Handle the update user response as needed
+        // 根据需要处理更新用户的响应
+      },
+      statusCode: {
+        404: function() {
+          alert("用户不存在");
+        }
+        // 其他状态码的处理可以继续添加
       },
       error: function(error) {
         console.error(error);
       }
     });
-    return false; // Prevent form submission
+
+
+    return false; // 阻止表单提交
   }
+
 
   function getUserByName() {
     const username = $("#find-by-name-username").val();
@@ -180,11 +256,30 @@
 
     // Check if response has 'data' property and it's not empty
     if (response && response.data) {
-      // Display find user by name result
+      // Create a table element
+      var tableElement = $("<table>").addClass("user-list-table");
+
+      // Create table header
+      var tableHeader = $("<tr>").append(
+              $("<th>").text("User ID"),
+              $("<th>").text("Username"),
+              $("<th>").text("Phone"),
+              $("<th>").text("Email")
+      );
+      tableElement.append(tableHeader);
+
+      // Create a row for user data
       var user = response.data;
-      var resultElement = $("<p>").text("User ID: " + user.ID + ", Username: " + user.Name +
-              ", Phone: " + user.Phone + ", Email: " + user.Email);
-      $("#findUserByNameContainer").append(resultElement);
+      var userRow = $("<tr>").append(
+              $("<td>").text(user.ID),
+              $("<td>").text(user.Name),
+              $("<td>").text(user.Phone),
+              $("<td>").text(user.Email)
+      );
+      tableElement.append(userRow);
+
+      // Append the table to the container
+      $("#findUserByNameContainer").append(tableElement);
     } else {
       console.error("No user found by name. Invalid response format or empty result.");
     }
@@ -218,15 +313,35 @@
 
     // Check if response has 'data' property and it's not empty
     if (response && response.data) {
-      // Display find user by phone result
+      // Create a table element
+      var tableElement = $("<table>").addClass("user-list-table");
+
+      // Create table header
+      var tableHeader = $("<tr>").append(
+              $("<th>").text("User ID"),
+              $("<th>").text("Username"),
+              $("<th>").text("Phone"),
+              $("<th>").text("Email")
+      );
+      tableElement.append(tableHeader);
+
+      // Create a row for user data
       var user = response.data;
-      var resultElement = $("<p>").text("User ID: " + user.ID + ", Username: " + user.Name +
-              ", Phone: " + user.Phone + ", Email: " + user.Email);
-      $("#findUserByPhoneContainer").append(resultElement);
+      var userRow = $("<tr>").append(
+              $("<td>").text(user.ID),
+              $("<td>").text(user.Name),
+              $("<td>").text(user.Phone),
+              $("<td>").text(user.Email)
+      );
+      tableElement.append(userRow);
+
+      // Append the table to the container
+      $("#findUserByPhoneContainer").append(tableElement);
     } else {
       console.error("No user found by phone. Invalid response format or empty result.");
     }
   }
+
 
   function logout() {
     // Implement logic to handle user logout, e.g., redirect to login page

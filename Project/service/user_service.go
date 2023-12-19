@@ -226,6 +226,45 @@ func DeleteUser(c *gin.Context) {
 	})
 }
 
+// HardDeleteUser
+// @Summary 硬删除用户
+// @Tags 用户模块
+// @param id query string false "id"
+// @Success 200 {string} json{"code","message"}
+// @Router /user/hardDeleteUser [get]
+func HardDeleteUser(c *gin.Context) {
+	user := models.UserBasic{}
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    -1,
+			"message": "参数错误",
+			"data":    nil,
+		})
+		return
+	}
+
+	user.ID = uint(id)
+
+	// 执行硬删除
+	result := models.HardDeleteUser(user)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    -1,
+			"message": "删除失败",
+			"data":    nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    0,
+		"message": "删除成功",
+		"data":    user,
+	})
+}
+
 // UpdateUser
 // @Summary 更新用户
 // @Tags 用户模块

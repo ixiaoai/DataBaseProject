@@ -169,6 +169,30 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/hardDeleteUser": {
+            "get": {
+                "tags": [
+                    "用户模块"
+                ],
+                "summary": "硬删除用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code\",\"message\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/updateUser": {
             "post": {
                 "tags": [
