@@ -56,7 +56,7 @@ const docTemplate = `{
                 "tags": [
                     "用户模块"
                 ],
-                "summary": "删除用户",
+                "summary": "软删除用户",
                 "parameters": [
                     {
                         "type": "string",

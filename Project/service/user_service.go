@@ -209,7 +209,7 @@ func FindUserByNameAndPwd(c *gin.Context) {
 }
 
 // DeleteUser
-// @Summary 删除用户
+// @Summary 软删除用户
 // @Tags 用户模块
 // @param id query string false "id"
 // @Success 200 {string} json{"code","message"}

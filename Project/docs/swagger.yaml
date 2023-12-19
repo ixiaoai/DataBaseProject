@@ -36,7 +36,7 @@ paths:
           description: code","message"}
           schema:
             type: string
-      summary: 删除用户
+      summary: 软删除用户
       tags:
       - 用户模块
   /user/findUserByNameAndPwd:
